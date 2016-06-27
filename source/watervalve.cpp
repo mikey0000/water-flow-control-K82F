@@ -8,6 +8,8 @@
 #include "../board/board.h"
 #include "watervalve.h"
 
+bool openValveState = false;
+
 /**
  * Switch pins around and wait x seconds until valve has fully opened
  *
@@ -65,15 +67,21 @@ void initState() {
 
 //stop when flow is going.
 void openValve() {
-	GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 1U);
-	GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 0U);
+	if(!openValveState) {
+		GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 1U);
+		GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 0U);
+		openValveState = !openValveState;
+	}
 }
 
 
 //stop when flow stops
 void closeValve() {
-	GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 1U);
-	GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 0U);
+	if(openValveState) {
+		GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 1U);
+		GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 0U);
+		openValveState = !openValveState;
+	}
 }
 
 

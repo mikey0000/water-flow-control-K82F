@@ -131,14 +131,9 @@ int main(void) {
   Setup_Pins();
 
 
+  resetLow();
   while(1) { /* Infinite loop to avoid leaving the main function */
 	  waterFlow flow = litresPerMinute(&pulseCount);
-
-	  if(flow.litresPerMinute > 1U) {
-		  openValve();
-	  } else {
-		  closeValve();
-	  }
 
 	  if (sw2_ButtonPress)
 		  {
@@ -150,7 +145,6 @@ int main(void) {
 				  sw2_counter = 0;
 			  }
 			  sw2_ButtonPress = false;
-
 		  }
 
 	  if (sw1_ButtonPress)
@@ -160,10 +154,13 @@ int main(void) {
 	  			  sw1_ButtonPress = false;
 	  		  }
 
-//    __asm("NOP"); /* something to use as a breakpoint stop while looping */
 	  if(mode_automatic) {
 //		  control the valve based on the flow
-
+		  if(flow.litresPerMinute > 1U) {
+			  openValve();
+		  } else {
+			  closeValve();
+		  }
 	  }
 
 
