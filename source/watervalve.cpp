@@ -21,7 +21,7 @@
 
 	gpio_pin_config_t power_config =
 		{
-			kGPIO_DigitalOutput, 1,
+			kGPIO_DigitalOutput, 0,
 		};
 
 
@@ -66,14 +66,14 @@ void initState() {
 //stop when flow is going.
 void openValve() {
 	GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 1U);
-	GPIO_SetPinsOutput(VALVE_VCC1_GPIO, 1U << VALVE_VCC1_PIN);
+	GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 0U);
 }
 
 
 //stop when flow stops
 void closeValve() {
 	GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 1U);
-	GPIO_SetPinsOutput(VALVE_VCC2_GPIO, 1U << VALVE_VCC2_PIN);
+	GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 0U);
 }
 
 

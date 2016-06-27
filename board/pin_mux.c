@@ -73,6 +73,9 @@ void BOARD_InitPins(void)
 	/* Affects PORTB_PCR19 register */
 	PORT_SetPinMux(PORTB, 19U, kPORT_PinDisabledOrAnalog); //why have I done this?
 
+	//setup the analog read as flexio0_D0 (ALT7)
+//	PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt7);
+
 //	PORT_SetPinConfig(VALVE_VCC2_PORT, VALVE_VCC2_PIN, &config);
 
 	PORT_SetPinMux(VALVE_VCC1_PORT, VALVE_VCC1_PIN, kPORT_MuxAsGpio);
@@ -88,6 +91,13 @@ void BOARD_InitPins(void)
 	/* Affects PORTC_PCR15 register */
 	PORT_SetPinMux(PORTC, 15U, kPORT_MuxAlt3);
 //	PORT_SetPinMux(HBRIDGE_MOTOR_ENABLE_PORT, HBRIDGE_MOTOR_ENABLE_PIN, kPORT_MuxAsGpio);
+
+
+	port_pin_config_t sensorConfig;
+	sensorConfig.mux = kPORT_MuxAsGpio;
+	sensorConfig.pullSelect = kPORT_PullDown;
+	//reading the sensor
+	PORT_SetPinConfig(FLOW_SENSOR_INPUT_PORT, FLOW_SENSOR_INPUT_PIN, &sensorConfig);
 
 	//voltage for the flow sensor
 	PORT_SetPinMux(FLOW_SENSOR_VCC_PORT, FLOW_SENSOR_VCC_PIN, kPORT_MuxAsGpio);

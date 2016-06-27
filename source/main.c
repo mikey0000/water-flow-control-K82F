@@ -41,16 +41,36 @@
 
 #include "watervalve.h"
 #include "flowsensor.h"
+#include "rtc.h"
 
 #include "clock_config.h"
 
 void Setup_Pins();
 
 
+// vars for the flow sensor pulse code
+
+// The hall-effect flow sensor outputs approximately 4.5 pulses per second per
+// litre/minute of flow.
+float calibrationFactor = 4.5;
+
+//volatile byte pulseCount;
+
+float flowRate = 0;
+int flowMilliLitres = 0U;
+long totalMilliLitres = 0U;
+long oldTime = 0U;
+
 
 /* Whether the SW button is pressed */
 volatile bool sw2_ButtonPress = false;
 volatile bool sw1_ButtonPress = false;
+volatile bool mode_automatic = true;
+
+int sw2_counter = 0;
+int readingCount = 0;
+int lastReading = 0;
+int pulseCount = 0U;
 
 void BOARD_SW2_IRQ_HANDLER(void)
 {
@@ -58,18 +78,39 @@ void BOARD_SW2_IRQ_HANDLER(void)
     GPIO_ClearPinsInterruptFlags(BOARD_SW2_GPIO, 1U << BOARD_SW2_GPIO_PIN);
     /* Change state of button. */
     sw2_ButtonPress = true;
+    mode_automatic = false;
+    sw2_counter++;
     /* Toggle LED. */
     openValve();
 }
 
 void BOARD_SW3_IRQ_HANDLER(void)
 {
-    /* Clear external interrupt flag. */
-    GPIO_ClearPinsInterruptFlags(BOARD_SW3_GPIO, 1U << BOARD_SW3_GPIO_PIN);
-    /* Change state of button. */
-    sw1_ButtonPress = true;
+
+	uint32_t number = GPIO_GetPinsInterruptFlags(FLOW_SENSOR_INPUT_GPIO);
+	PRINTF("Pin number: %d\r\n", number);
+
+	if(number == 8U) {
+		GPIO_ClearPinsInterruptFlags(FLOW_SENSOR_INPUT_GPIO, 1U << FLOW_SENSOR_INPUT_PIN);
+		uint32_t reading = GPIO_ReadPinInput(FLOW_SENSOR_INPUT_GPIO, FLOW_SENSOR_INPUT_PIN);
+		PRINTF("sensor reading: %d\r\n", reading);
+		if (lastReading != reading) {
+			pulseCount++;
+			lastReading = reading;
+		}
+		PRINTF("Pulses %d \r\n", pulseCount);
+	}
+
     /* Toggle LED. */
-    closeValve();
+	if(number == 64U) {
+	 /* Clear external interrupt flag. */
+		GPIO_ClearPinsInterruptFlags(BOARD_SW3_GPIO, 1U << BOARD_SW3_GPIO_PIN);
+		/* Change state of button. */
+		sw1_ButtonPress = true;
+		mode_automatic = false;
+		sw2_counter = 0;
+		closeValve();
+	}
 }
 
 
@@ -86,18 +127,30 @@ int main(void) {
   BOARD_BootClockRUN();
   BOARD_InitDebugConsole();
 
-
+  init_clock();
   Setup_Pins();
-//  openValve();
-//  closeValve();
-  /* Add your code here */
+
 
   while(1) { /* Infinite loop to avoid leaving the main function */
+	  waterFlow flow = litresPerMinute(&pulseCount);
+
+	  if(flow.litresPerMinute > 1U) {
+		  openValve();
+	  } else {
+		  closeValve();
+	  }
+
 	  if (sw2_ButtonPress)
 		  {
 			  PRINTF(" %s is pressed \r\n", BOARD_SW2_NAME);
 			  /* Reset state of button. */
+			  if(sw2_counter == 2) {
+				  //reset to automatic
+				  mode_automatic = true;
+				  sw2_counter = 0;
+			  }
 			  sw2_ButtonPress = false;
+
 		  }
 
 	  if (sw1_ButtonPress)
@@ -108,10 +161,17 @@ int main(void) {
 	  		  }
 
 //    __asm("NOP"); /* something to use as a breakpoint stop while looping */
+	  if(mode_automatic) {
+//		  control the valve based on the flow
 
-	  readSensor();
+	  }
+
+
   }
 }
+
+
+
 
 
 void Setup_Pins() {
