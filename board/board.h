@@ -44,7 +44,7 @@
 #define BOARD_NAME "FRDM-K82F"
 
 
-//define two pins for vcc1 and vcc2
+//define two pins for vcc1 and vcc2 for controlling the H-bridge
 #define VALVE_VCC1_PIN 16U //PTB16
 #define VALVE_VCC1_GPIO GPIOB
 #define VALVE_VCC1_PORT PORTB

@@ -32,6 +32,11 @@ uint32_t oldTime;
 		kGPIO_DigitalInput, 0,
 	};
 
+    /*
+     * The water valve works based on pulses from the hall sensor
+     * we count the pulses over 1 second and we get our flow from that
+     */
+
 
 void initSensor() {
 	GPIO_PinInit(FLOW_SENSOR_VCC_GPIO, FLOW_SENSOR_VCC_PIN, &power_config);
@@ -71,6 +76,7 @@ waterFlow litresPerMinute(int *pulseCount) {
 	    // Add the millilitres passed in this second to the cumulative total
 	    totalMilliLitres += flowMilliLitres;
 
+	    //not sure the L/min is printing quite right but I trust the millilitre values
 	    PRINTF("Flow rate: %.2f L/min \r\n", flowRate);
 	    // Print the number of litres flowed in this second
 	    PRINTF("Current Liquid Flowing: %d mL/Sec \r\n", flowMilliLitres);             // Output separator

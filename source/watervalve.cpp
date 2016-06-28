@@ -41,6 +41,7 @@ void initState() {
 	GPIO_PinInit(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, &valve_config);
 	GPIO_PinInit(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, &valve_config);
 
+//	this lets us get an interrupt when we press the buttons
 	PORT_SetPinInterruptConfig(BOARD_SW2_PORT, BOARD_SW2_GPIO_PIN, kPORT_InterruptFallingEdge);
 	EnableIRQ(BOARD_SW2_IRQ);
 
@@ -72,6 +73,7 @@ void openValve() {
 		GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 0U);
 		openValveState = !openValveState;
 	}
+	//extra could work out how many seconds it takes for the valve to open then resetLow again.
 }
 
 
@@ -82,9 +84,10 @@ void closeValve() {
 		GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 0U);
 		openValveState = !openValveState;
 	}
+	//extra could work out how many seconds it takes for the valve to open then resetLow again.
 }
 
-
+// drop power to ball valve
 void resetLow() {
 	GPIO_WritePinOutput(VALVE_VCC1_GPIO, VALVE_VCC1_PIN, 0U);
 	GPIO_WritePinOutput(VALVE_VCC2_GPIO, VALVE_VCC2_PIN, 0U);

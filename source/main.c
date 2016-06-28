@@ -48,6 +48,8 @@
 void Setup_Pins();
 
 
+#define WATER_SHUTOFF_LEVEL 1U
+
 // vars for the flow sensor pulse code
 
 // The hall-effect flow sensor outputs approximately 4.5 pulses per second per
@@ -67,6 +69,7 @@ volatile bool sw2_ButtonPress = false;
 volatile bool sw1_ButtonPress = false;
 volatile bool mode_automatic = true;
 
+//variables for holding states
 int sw2_counter = 0;
 int readingCount = 0;
 int lastReading = 0;
@@ -86,11 +89,12 @@ void BOARD_SW2_IRQ_HANDLER(void)
 
 void BOARD_SW3_IRQ_HANDLER(void)
 {
-
+	//The interrupts are port specific so we need to know which pin triggered it
 	uint32_t number = GPIO_GetPinsInterruptFlags(FLOW_SENSOR_INPUT_GPIO);
-	PRINTF("Pin number: %d\r\n", number);
+//	PRINTF("Pin number: %d\r\n", number);
 
 	if(number == 8U) {
+		//clear the interrupt otherwise it keeps firing
 		GPIO_ClearPinsInterruptFlags(FLOW_SENSOR_INPUT_GPIO, 1U << FLOW_SENSOR_INPUT_PIN);
 		uint32_t reading = GPIO_ReadPinInput(FLOW_SENSOR_INPUT_GPIO, FLOW_SENSOR_INPUT_PIN);
 		PRINTF("sensor reading: %d\r\n", reading);
@@ -126,7 +130,7 @@ int main(void) {
   BOARD_InitPins();
   BOARD_BootClockRUN();
   BOARD_InitDebugConsole();
-
+  //make sure we set everything up including the Real time clock
   init_clock();
   Setup_Pins();
 
@@ -153,10 +157,10 @@ int main(void) {
 	  			  /* Reset state of button. */
 	  			  sw1_ButtonPress = false;
 	  		  }
-
+	  //we can switch between automatic and manual mode for maintainence
 	  if(mode_automatic) {
-//		  control the valve based on the flow
-		  if(flow.litresPerMinute > 1U) {
+//		  control the valve based on the flow, if it goes below 1 litre a minute turn off
+		  if(flow.litresPerMinute > WATER_SHUTOFF_LEVEL) {
 			  openValve();
 		  } else {
 			  closeValve();

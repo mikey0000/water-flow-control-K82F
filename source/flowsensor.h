@@ -19,7 +19,7 @@
 extern "C" {
 #endif /* __cplusplus*/
 
-
+//this holds our water flow information
 typedef struct WaterFlow {
 	float litresPerMinute;
 	uint8_t millilitresPerSec;
