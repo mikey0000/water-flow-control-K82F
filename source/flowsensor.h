@@ -11,7 +11,6 @@
 
 #include "fsl_port.h"
 #include "fsl_gpio.h"
-#include "fsl_adc16.h"
 #include "clock_config.h"
 #include "board.h"
 

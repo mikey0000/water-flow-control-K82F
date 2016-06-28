@@ -14,7 +14,7 @@
 
 // The hall-effect flow sensor outputs approximately 4.5 pulses per second per
 // litre/minute of flow.
-float calibrationFactor = 4.5;
+float calibrationFactor = 4.5f;
 
 float flowRate;
 uint8_t flowMilliLitres;
@@ -42,7 +42,7 @@ void initSensor() {
 
 	GPIO_PinInit(FLOW_SENSOR_INPUT_GPIO, FLOW_SENSOR_INPUT_PIN, &sensor_config);
 
-	flowRate          = 0.0;
+	flowRate          = 0.0f;
 	flowMilliLitres   = 0U;
 	totalMilliLitres  = 0U;
 	oldTime           = 0U;
@@ -66,12 +66,12 @@ waterFlow litresPerMinute(int *pulseCount) {
 	    // Divide the flow rate in litres/minute by 60 to determine how many litres have
 	    // passed through the sensor in this 1 second interval, then multiply by 1000 to
 	    // convert to millilitres.
-	    flowMilliLitres = (flowRate / 60) * 1000;
+	    flowMilliLitres = (flowRate / 60) * 1000U;
 
 	    // Add the millilitres passed in this second to the cumulative total
 	    totalMilliLitres += flowMilliLitres;
 
-	    PRINTF("Flow rate: %2.2f L/min \r\n", flowRate);
+	    PRINTF("Flow rate: %.2f L/min \r\n", flowRate);
 	    // Print the number of litres flowed in this second
 	    PRINTF("Current Liquid Flowing: %d mL/Sec \r\n", flowMilliLitres);             // Output separator
 	    // Print the cumulative total of litres flowed since starting
