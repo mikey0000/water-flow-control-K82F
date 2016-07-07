@@ -41,6 +41,7 @@
 
 #include "watervalve.h"
 #include "flowsensor.h"
+#include "co2sensor.cpp"
 #include "rtc.h"
 
 #include "clock_config.h"

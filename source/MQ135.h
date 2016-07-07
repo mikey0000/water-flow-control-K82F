@@ -13,11 +13,11 @@ the datasheet but the information there seems to be wrong.
 v1.0 - First release
 */
 /**************************************************************************/
-#ifndef MQ135_H
-#define MQ135_H
+#ifndef MQ135_H_
+#define MQ135_H_
 
-#include "board.h"
 #include "math.h"
+#include <stdint.h>
 
 /// The load resistance on the board
 #define RLOAD 10.0
@@ -36,10 +36,6 @@ v1.0 - First release
 /// Atmospheric CO2 level for calibration purposes
 #define ATMOCO2 397.13
 
-#if defined(__cplusplus)
-extern "C" {
-#endif /* __cplusplus*/
-
 class MQ135 {
 
  public:
@@ -53,9 +49,5 @@ class MQ135 {
   float getCorrectedRZero(float t, float h, uint32_t val);
 };
 
-
-#if defined(__cplusplus)
-}
-#endif /* __cplusplus*/
 
 #endif /* SOURCE_MQ135_H_ */

@@ -82,7 +82,7 @@ void init_co2sensor() {
 
 }
 
-uint32_t readCO2Sensor() {
+void readCO2Sensor() {
 	ADC16_SetChannelConfig(CO2_SENSOR_BASE, CO2_SENSOR_CHANNEL_GROUP, &adc16ChannelConfigStruct);
 	while (0U == (kADC16_ChannelConversionDoneFlag &
 				  ADC16_GetChannelStatusFlags(CO2_SENSOR_BASE, CO2_SENSOR_CHANNEL_GROUP)))
