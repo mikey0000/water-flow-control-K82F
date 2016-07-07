@@ -167,7 +167,7 @@ int main(void) {
 		  }
 	  }
 
-
+	  readCO2Sensor();
   }
 }
 
@@ -178,6 +178,7 @@ int main(void) {
 void Setup_Pins() {
 	initState();
 	initSensor();
+	init_co2sensor();
 }
 
 

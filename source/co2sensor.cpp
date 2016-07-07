@@ -11,13 +11,31 @@
 #include "fsl_gpio.h"
 #include "clock_config.h"
 #include "board.h"
+#include "MQ135.h"
 
 adc16_config_t adc16ConfigStruct;
 adc16_channel_config_t adc16ChannelConfigStruct;
+MQ135 gasSensor;
+
+gpio_pin_config_t sensor_power =
+	{
+		kGPIO_DigitalOutput, 1,
+	};
+
+	gpio_pin_config_t sensor_grnd =
+		{
+			kGPIO_DigitalOutput, 0,
+		};
+
 
 
 void init_co2sensor() {
+	gasSensor = MQ135();
 
+	GPIO_PinInit(CO2_SENSOR_ENABLE_GPIO, CO2_SENSOR_ENABLE_PIN, &sensor_power);
+	GPIO_PinInit(CO2_SENSOR_GRND_GPIO, CO2_SENSOR_GRND_PIN, &sensor_grnd);
+
+	GPIO_WritePinOutput(CO2_SENSOR_ENABLE_GPIO, CO2_SENSOR_ENABLE_PIN, 1U);
  /*
      * adc16ConfigStruct.referenceVoltageSource = kADC16_ReferenceVoltageSourceVref;
      * adc16ConfigStruct.clockSource = kADC16_ClockSourceAsynchronousClock;
@@ -70,5 +88,5 @@ uint32_t readCO2Sensor() {
 				  ADC16_GetChannelStatusFlags(CO2_SENSOR_BASE, CO2_SENSOR_CHANNEL_GROUP)))
 	{
 	}
-	PRINTF("ADC Value: %d\r\n", ADC16_GetChannelConversionValue(CO2_SENSOR_BASE, CO2_SENSOR_CHANNEL_GROUP));
+	PRINTF("ADC Value: %d\r\n", gasSensor.getPPM(ADC16_GetChannelConversionValue(CO2_SENSOR_BASE, CO2_SENSOR_CHANNEL_GROUP)));
 }

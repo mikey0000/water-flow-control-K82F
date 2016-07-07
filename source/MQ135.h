@@ -16,6 +16,9 @@ v1.0 - First release
 #ifndef MQ135_H
 #define MQ135_H
 
+#include "board.h"
+#include "math.h"
+
 /// The load resistance on the board
 #define RLOAD 10.0
 /// Calibration resistance at atmospheric CO2 level
@@ -33,18 +36,26 @@ v1.0 - First release
 /// Atmospheric CO2 level for calibration purposes
 #define ATMOCO2 397.13
 
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
+
 class MQ135 {
- private:
-  uint8_t _pin;
 
  public:
-  MQ135(uint8_t pin);
+  MQ135();
   float getCorrectionFactor(float t, float h);
-  float getResistance();
-  float getCorrectedResistance(float t, float h);
-  float getPPM();
-  float getCorrectedPPM(float t, float h);
-  float getRZero();
-  float getCorrectedRZero(float t, float h);
+  float getResistance(uint32_t val);
+  float getCorrectedResistance(float t, float h, uint32_t val);
+  float getPPM(uint32_t val);
+  float getCorrectedPPM(float t, float h, uint32_t val);
+  float getRZero(uint32_t val);
+  float getCorrectedRZero(float t, float h, uint32_t val);
 };
+
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus*/
+
 #endif /* SOURCE_MQ135_H_ */

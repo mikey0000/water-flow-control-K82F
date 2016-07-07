@@ -20,12 +20,12 @@ v1.0 - First release
 /*!
 @brief  Default constructor
 
+@param[in] port the gpio port to read
 @param[in] pin  The analog input pin for the readout of the sensor
 */
 /**************************************************************************/
 
-MQ135::MQ135(uint8_t pin) { //TODO correct to KDS
-  _pin = pin;
+MQ135::MQ135() {
 }
 
 
@@ -50,8 +50,7 @@ float MQ135::getCorrectionFactor(float t, float h) {
 @return The sensor resistance in kOhm
 */
 /**************************************************************************/
-float MQ135::getResistance() {
-  int val = analogRead(_pin); //TODO correct to KDS
+float MQ135::getResistance(uint32_t val) {
   return ((1023./(float)val) * 5. - 1.)*RLOAD;
 }
 
@@ -66,8 +65,8 @@ float MQ135::getResistance() {
 @return The corrected sensor resistance kOhm
 */
 /**************************************************************************/
-float MQ135::getCorrectedResistance(float t, float h) {
-  return getResistance()/getCorrectionFactor(t, h);
+float MQ135::getCorrectedResistance(float t, float h, uint32_t val) {
+  return getResistance(val)/getCorrectionFactor(t, h);
 }
 
 /**************************************************************************/
@@ -77,8 +76,8 @@ float MQ135::getCorrectedResistance(float t, float h) {
 @return The ppm of CO2 in the air
 */
 /**************************************************************************/
-float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+float MQ135::getPPM(uint32_t val) {
+  return PARA * pow((getResistance(val)/RZERO), -PARB);
 }
 
 /**************************************************************************/
@@ -92,8 +91,8 @@ float MQ135::getPPM() {
 @return The ppm of CO2 in the air
 */
 /**************************************************************************/
-float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
+float MQ135::getCorrectedPPM(float t, float h, uint32_t val) {
+  return PARA * pow((getCorrectedResistance(t, h, val)/RZERO), -PARB);
 }
 
 /**************************************************************************/
@@ -103,8 +102,8 @@ float MQ135::getCorrectedPPM(float t, float h) {
 @return The sensor resistance RZero in kOhm
 */
 /**************************************************************************/
-float MQ135::getRZero() {
-  return getResistance() * pow((ATMOCO2/PARA), (1./PARB));
+float MQ135::getRZero(uint32_t val) {
+  return getResistance(val) * pow((ATMOCO2/PARA), (1./PARB));
 }
 
 /**************************************************************************/
@@ -118,6 +117,6 @@ float MQ135::getRZero() {
 @return The corrected sensor resistance RZero in kOhm
 */
 /**************************************************************************/
-float MQ135::getCorrectedRZero(float t, float h) {
-  return getCorrectedResistance(t, h) * pow((ATMOCO2/PARA), (1./PARB));
+float MQ135::getCorrectedRZero(float t, float h, uint32_t val) {
+  return getCorrectedResistance(t, h, val) * pow((ATMOCO2/PARA), (1./PARB));
 }
