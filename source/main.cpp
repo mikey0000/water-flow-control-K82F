@@ -41,6 +41,7 @@
 
 #include "watervalve.h"
 #include "flowsensor.h"
+#include "co2sensor.cpp"
 #include "rtc.h"
 
 #include "clock_config.h"
@@ -167,7 +168,7 @@ int main(void) {
 		  }
 	  }
 
-
+	  readCO2Sensor();
   }
 }
 
@@ -178,6 +179,7 @@ int main(void) {
 void Setup_Pins() {
 	initState();
 	initSensor();
+	init_co2sensor();
 }
 
 

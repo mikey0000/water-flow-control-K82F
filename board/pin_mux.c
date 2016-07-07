@@ -73,17 +73,21 @@ void BOARD_InitPins(void)
 	/* Affects PORTB_PCR19 register */
 	PORT_SetPinMux(PORTB, 19U, kPORT_PinDisabledOrAnalog); //why have I done this?
 
+
+	//CO2 sensor analog input
+	PORT_SetPinMux(PORTB, 2U, kPORT_PinDisabledOrAnalog);
+
 	//setup the analog read as flexio0_D0 (ALT7)
 //	PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt7);
 
 //	PORT_SetPinConfig(VALVE_VCC2_PORT, VALVE_VCC2_PIN, &config);
 
+	CLOCK_EnableClock(kCLOCK_PortC);
+
 	PORT_SetPinMux(VALVE_VCC1_PORT, VALVE_VCC1_PIN, kPORT_MuxAsGpio);
 	PORT_SetPinMux(VALVE_VCC2_PORT, VALVE_VCC2_PIN, kPORT_MuxAsGpio);
 
 
-
-	CLOCK_EnableClock(kCLOCK_PortC);
 	/* Debug uart port mux config */
 	/* Enable uart port clock */
 	/* Affects PORTC_PCR14 register */
@@ -92,6 +96,8 @@ void BOARD_InitPins(void)
 	PORT_SetPinMux(PORTC, 15U, kPORT_MuxAlt3);
 //	PORT_SetPinMux(HBRIDGE_MOTOR_ENABLE_PORT, HBRIDGE_MOTOR_ENABLE_PIN, kPORT_MuxAsGpio);
 
+
+	//co2sensor power and grnd
 
 	port_pin_config_t sensorConfig;
 	sensorConfig.mux = kPORT_MuxAsGpio;
